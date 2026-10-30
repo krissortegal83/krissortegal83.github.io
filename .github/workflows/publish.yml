@@ -1,4 +1,4 @@
-name: Publicar sitio personal
+name: Publish personal site
 on:
   push:
     branches: [main]
