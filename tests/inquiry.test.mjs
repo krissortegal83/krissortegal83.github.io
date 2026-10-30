@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {prepareInquiry,emailHref,services} from '../assets/inquiry-model.mjs';
+const sample={service:'process',name:'Test Visitor',company:'Example & Co',challenge:'Our purchasing handoffs require repeated manual entry.',outcome:'A clear view of what should change first.',timing:'exploring'};
+test('every offered starting point produces the correct subject and complete brief',()=>{for(const [service,label] of Object.entries(services)){const r=prepareInquiry({...sample,service});assert.equal(r.ok,true);assert.equal(r.subject,`Project inquiry: ${label}`);assert.ok(r.body.includes(sample.challenge));assert.ok(r.body.includes(sample.company));}});
+test('whitespace-only name and challenge cannot create an inquiry',()=>{const r=prepareInquiry({...sample,name:'  ',challenge:' '.repeat(30)});assert.equal(r.ok,false);assert.ok(r.errors.name);assert.ok(r.errors.challenge);});
+test('unsupported service and timing are rejected',()=>{const r=prepareInquiry({...sample,service:'__proto__',timing:'unknown'});assert.equal(r.ok,false);assert.ok(r.errors.service);assert.ok(r.errors.timing);});
+test('optional details remain optional with honest placeholders',()=>{const r=prepareInquiry({...sample,company:'',outcome:''});assert.equal(r.ok,true);assert.match(r.body,/Not specified/);assert.match(r.body,/help clarifying/);});
+test('field limits are enforced before preparing a message',()=>{const r=prepareInquiry({...sample,name:'x'.repeat(81),company:'x'.repeat(101),challenge:'x'.repeat(601),outcome:'x'.repeat(301)});assert.equal(r.ok,false);assert.equal(Object.keys(r.errors).length,4);});
+test('email link keeps reserved characters and line breaks inside the body parameter',()=>{const text='A & B? #1\nContact: visitor@example.test';const href=emailHref('Question & scope',text);const u=new URL(href);assert.equal(u.pathname,'srty.53@gmail.com');assert.equal(u.searchParams.get('subject'),'Question & scope');assert.equal(u.searchParams.get('body'),text);assert.equal(u.hash,'');});

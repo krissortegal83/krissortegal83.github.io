@@ -18,11 +18,15 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test tests/inquiry.test.mjs
       - uses: actions/configure-pages@v5
       - run: |
           mkdir -p _site
           cp index.html .nojekyll _site/
-          cp -R assets technical-program-management-portfolio case-studies services profile _site/
+          cp -R assets technical-program-management-portfolio case-studies services profile contact _site/
           base64 --decode assets/christian-profile.pdf.b64 > _site/assets/christian-ortega-lugo-profile.pdf
           rm _site/assets/christian-profile.pdf.b64
       - uses: actions/upload-pages-artifact@v3

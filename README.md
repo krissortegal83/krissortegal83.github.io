@@ -13,3 +13,9 @@ GitHub Actions publishes the static site. The workflow decodes `assets/christian
 ## En español
 
 Mi sitio reúne casos de estudio, demos, servicios y una presentación descargable. Los casos explican mi enfoque y sus límites; no atribuyen resultados ficticios a clientes.
+
+## Consulting offers and contact
+
+The services page describes three bounded starting engagements. The contact page prepares an editable inquiry for email or LinkedIn; it does not submit visitor data to a server. Email opens the visitor's configured email application. Clipboard access has a manual-copy fallback. No analytics or form submissions are stored by the page.
+
+Run `node --test tests/inquiry.test.mjs` to check message validation and email encoding. GitHub Actions runs these checks before publication.
